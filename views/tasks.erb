@@ -1,7 +1,7 @@
-<h1>Enter tasks for <%= @list["name"] %>:</h1>
-<h1>Tasks array length: <%= @tasks %></h1>
+<h1>Enter tasks for <%= @list.name %>:</h1>
+<h1>Tasks array length:</h1>
 <br><br>
-<form action="/tasks/<%= @list["id"] %>" method="post">
+<form action="/tasks/<%= @list.id %>" method="post">
   Task: <input type="text" name="task_entry" value="">
   <button class="btn-success" type="submit">Enter</button>
 </form>
@@ -9,9 +9,9 @@
 <br><br><br>
 <h2>Tasks:</h2>
   <ul>
-    <% %>
-      <%= @list_id%>
-    <%  %>
+    <% @tasks.each do |task|%>
+      <li><%= task.description.capitalize %></li>
+    <% end %>
 
   </ul>
 

@@ -28,9 +28,7 @@ end
 get("/tasks/:id") do
 @list_id = params[:id].to_i
 @list = List.find_list(@list_id)
-@tasks = task.show_tasks(@list_id)
-binding.pry
-
+@tasks = @list.tasks
 
 (erb :tasks)
 end

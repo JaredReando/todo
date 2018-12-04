@@ -27,9 +27,4 @@ class Task
     DB.exec("INSERT INTO tasks (description, list_id) VALUES ('#{@description}', #{@list_id});")
   end
 
-  def show_tasks(list_id)
-    tasks = DB.exec("SELECT description FROM tasks WHERE list_id = #{list_id}")
-    tasks
-  end
-
 end
