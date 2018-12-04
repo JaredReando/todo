@@ -1,0 +1,62 @@
+1. A query on a DB ("SELECT * FROM table_name") returns an array of hashes:
+[{:id => "1", :name, "Tom"}, {:id => "2", :name => "Dick"}, {:id => "3", :name => "Harry"}]
+
+Even if your query returns a single record, to work with it in Ruby, you must specify the array position of this search result so you can work with the has data.
+
+  Won't work:
+    result = DB.exec("SELECT * FROM table_name WHERE id = 1")
+    result.fetch["name"]
+
+  -This results in an error, since you're trying to run the ".fetch" method on an array. To get it working, first specify the array position so you can use your hash method on the result:
+
+    result = DB.exec("SELECT * FROM table_name WHERE id = 1")
+    result[0] (this accesses the hash position: {:id => "1", :name, "Tom"})
+
+    result[0].fetch["name"] (this returns the fetch result "Tom")
+
+
+2. When working with Ruby Classes and a DB, Ruby will only display instances of its classes, not the direct DB SQL query.
+
+What this means is, each time you query the DB, to view the results on your Ruby page you must create instances of Ruby classes and push them to a variable or variable array in order to show them on the page.
+
+  For example, if DB table names_table contains 3 records, to see those on your page, you must first create 3 instances of a Name class in Ruby
+
+  Here's what this could look like:
+
+    1. Query DB for all names records:
+      all_records = DB.exec("SELECT * FROM names_table")
+        - This returns an array of hashes
+        - In Ruby, you need to iterate over this array using an 'each' loop, setting whichever table hash values you wish to display temporarily as Ruby variables:
+
+            all_records.each do |record|
+              name = record.fetch["name"]
+            end
+
+        - However, our goal is not to return the result of a query, but an array of newly created Ruby objects. So, we need to go a little further here by initialized an empty array in our method to "catch" the new class instances we'll create on each loop through the query return hash:
+
+          class_names = []
+
+          all_records.each do |record|
+            name = record.fetch["name"]
+            id = record.fetch["id"]
+            new_name = Name.new({:name => name, :id => id})
+            class_names.push(new_name)
+          end
+          return class_names
+
+        - We can eliminate a line here by omitting the 'new_name' variable definition. Instead, we can simply create the class instance right when we push it to the 'class_names' array:
+
+          class.names.push(Name.new({:name => name, :id => id}))
+
+        - Our final method will look like this:
+
+          def Name.show_all
+            class_names = []
+            all_records = DB.exec("SELECT * FROM names_table")
+            all_records.each do |record|
+              name = record.fetch("name")
+              id = record.fetch("id").to_i
+              class.names.push(Name.new({:name => name, :id => id}))
+            end
+            class_names
+          end
